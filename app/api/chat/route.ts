@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const maxDuration = 60;
 import { searchBlogContext } from '@/lib/blog-context';
 
 const ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
@@ -39,8 +41,9 @@ When you reference a blog post, always include the link using /blog/SLUG.`;
             { role: 'system', content: systemPrompt },
             ...(messages || []).slice(-8),
           ],
-          max_tokens: 800,
+          max_tokens: 500,
           temperature: 0.3,
+          top_p: 0.9,
         }),
       });
 
