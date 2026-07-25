@@ -4,9 +4,64 @@ import { getPostBySlug, getAdjacentPosts } from '@/lib/posts';
 import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Calendar, Clock, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, Headphones, Loader2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
-import { use } from 'react';
+import { use, useState, useRef } from 'react';
+
+function ListenButton({ text, title }: { text: string; title: string }) {
+  const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const handleListen = async () => {
+    if (playing) {
+      audioRef.current?.pause();
+      setPlaying(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Get plain text without HTML tags, limit to first 2000 chars
+      const plainText = text.replace(/<[^>]+>/g, '').slice(0, 2000);
+      const res = await fetch(`/api/tts?text=${encodeURIComponent(plainText)}&voice=F1`);
+      if (!res.ok) throw new Error('TTS failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      if (audioRef.current) {
+        audioRef.current.src = url;
+        audioRef.current.play();
+        setPlaying(true);
+        audioRef.current.onended = () => { setPlaying(false); URL.revokeObjectURL(url); };
+      }
+    } catch (err) {
+      console.error('TTS error:', err);
+      setPlaying(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <audio ref={audioRef} className="hidden" />
+      <button
+        onClick={handleListen}
+        disabled={loading}
+        className="inline-flex items-center gap-2 rounded-full border border-navy-200 dark:border-navy-600 px-4 py-1.5 text-sm font-medium text-navy-600 dark:text-navy-300 hover:bg-navy-50 dark:hover:bg-navy-800 transition-all disabled:opacity-50"
+      >
+        {loading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : playing ? (
+          <Loader2 className="h-4 w-4 animate-pulse" />
+        ) : (
+          <Headphones className="h-4 w-4" />
+        )}
+        {loading ? 'Generating...' : playing ? 'Stop' : 'Listen'}
+      </button>
+    </>
+  );
+}
 
 export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -63,6 +118,7 @@ export default function PostPage({ params }: { params: Promise<{ slug: string }>
             <Clock className="h-4 w-4" />
             {post.readTime}
           </span>
+          <ListenButton text={post.content} title={post.title} />
         </div>
       </motion.header>
 
