@@ -1,74 +1,101 @@
 import Link from 'next/link';
-import { BookOpen, Mail, Twitter, Linkedin, Youtube, Instagram } from 'lucide-react';
+import { BookOpen, Rss } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-navy-100 bg-navy-900 text-navy-100">
+    <footer className="border-t border-navy-100 dark:border-navy-700 bg-navy-50 dark:bg-navy-800/50">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-4">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-gold-400" />
-              <span className="font-serif text-lg font-bold text-white">
-                Bovée &amp; Thill
+          <div>
+            <Link href="/" className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-navy-700 dark:text-gold-400" />
+              <span className="font-serif text-base font-bold text-navy-900 dark:text-white">
+                Bovée <span className="text-gold-500">&</span> Thill
               </span>
-            </div>
-            <p className="mt-3 max-w-sm text-sm text-navy-300">
-              Insights and commentary from the authors of the world&apos;s leading
-              business communication textbooks, plus complimentary resources for
-              classroom use.
+            </Link>
+            <p className="mt-3 text-sm text-navy-500 dark:text-navy-300 leading-relaxed">
+              Authors of Business Communication Today, the world&apos;s leading
+              business communication textbook, now in its 16th edition.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gold-400">
+            <h4 className="mb-4 text-sm font-semibold text-navy-900 dark:text-white uppercase tracking-wider">
               Explore
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/blog" className="hover:text-gold-400">Blog</Link></li>
-              <li><Link href="/tools" className="hover:text-gold-400">AI Tools</Link></li>
-              <li><Link href="/about" className="hover:text-gold-400">About Authors</Link></li>
-              <li><Link href="/textbooks" className="hover:text-gold-400">Textbooks</Link></li>
+            </h4>
+            <ul className="space-y-2">
+              {[
+                { label: 'Blog', href: '/blog' },
+                { label: 'AI Tools', href: '/tools' },
+                { label: 'Textbooks', href: '/textbooks' },
+                { label: 'About', href: '/about' },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-navy-500 dark:text-navy-300 hover:text-navy-900 dark:hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Categories */}
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gold-400">
+            <h4 className="mb-4 text-sm font-semibold text-navy-900 dark:text-white uppercase tracking-wider">
+              Topics
+            </h4>
+            <ul className="space-y-2">
+              {['Business Communication', 'Education', 'AI & Technology'].map(
+                (cat) => (
+                  <li key={cat}>
+                    <Link
+                      href={`/category/${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                      className="text-sm text-navy-500 dark:text-navy-300 hover:text-navy-900 dark:hover:text-white transition-colors"
+                    >
+                      {cat}
+                    </Link>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+
+          {/* Connect */}
+          <div>
+            <h4 className="mb-4 text-sm font-semibold text-navy-900 dark:text-white uppercase tracking-wider">
               Connect
-            </h3>
-            <div className="flex gap-3">
-              {[
-                { icon: Twitter, href: 'https://twitter.com/BoveeThill_Blog', label: 'Twitter' },
-                { icon: Linkedin, href: 'https://www.linkedin.com/in/cbovee', label: 'LinkedIn' },
-                { icon: Youtube, href: 'https://www.youtube.com/@BoveeandThill', label: 'YouTube' },
-                { icon: Instagram, href: 'https://www.instagram.com/courtlandbovee/', label: 'Instagram' },
-                { icon: Mail, href: 'mailto:info@businesscommunicationnetwork.com', label: 'Email' },
-              ].map(({ icon: Icon, href, label }) => (
+            </h4>
+            <ul className="space-y-2">
+              <li>
                 <a
-                  key={label}
-                  href={href}
+                  href="/feed.xml"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy-800 text-navy-300 transition-colors hover:bg-gold-500 hover:text-navy-900"
-                  aria-label={label}
+                  className="inline-flex items-center gap-2 text-sm text-navy-500 dark:text-navy-300 hover:text-navy-900 dark:hover:text-white transition-colors"
                 >
-                  <Icon className="h-4 w-4" />
+                  <Rss className="h-4 w-4 text-gold-500" />
+                  RSS Feed
                 </a>
-              ))}
-            </div>
+              </li>
+              <li className="text-sm text-navy-400 dark:text-navy-400">
+                Published by Pearson Education
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-navy-800 pt-6 text-center text-xs text-navy-400">
+        <div className="mt-10 border-t border-navy-100 dark:border-navy-700 pt-6 text-center text-xs text-navy-400 dark:text-navy-400">
           <p>
-            © {new Date().getFullYear()} Bovée &amp; Thill · Business Communication Network ·
-            Published by Pearson Education
+            © {new Date().getFullYear()} Bovée & Thill · Business Communication
+            Network · Published by Pearson Education
           </p>
           <p className="mt-1">
-            Rebuilt with Next.js + Framer Motion · Deployed on Vercel
+            Built with Next.js · Deployed on Vercel
           </p>
         </div>
       </div>
